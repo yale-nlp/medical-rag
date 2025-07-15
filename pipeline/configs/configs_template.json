@@ -1,0 +1,76 @@
+{
+    "_comment_general": "General pipeline settings",
+    "hf_embedding_model": "Qwen/Qwen3-Embedding-8B",
+    "embedding_model_device": "cpu",
+    "retrievers": ["semantic", "pubmed", "local"],
+    "local_index_path": "/home/dj475/yalenlp/medical-rag/pipeline/data/embedded_pages_hf_gpu_Qwen_Qwen3-Embedding-8B.json",
+    "keyword_file": "/home/dj475/yalenlp/medical-rag/data/input_files/yale_internal_keywords_max3.jsonl",
+    "s2_retrieved_file": "/home/dj475/yalenlp/medical-rag/250616/retrieved_data/s2_ReXGradient-160K.jsonl",
+    "pubmed_retrieved_file": "/home/dj475/yalenlp/medical-rag/250616/retrieved_data/pubmed_ReXGradient-160K.jsonl",
+
+    "feedback_dir": "result/qwen3/0616_yale_internal",
+    "feedback_filename_suffix": "0616_yale_internal",
+
+    "_comment_reranker": "Settings for the reranker model, loaded directly by a worker.",
+    "reranker_llm_settings": {
+        "model": "Qwen/Qwen3-Reranker-8B",
+        "gpu_id": "0",
+        "tensor_parallel_size": 1,
+        "max_model_len": 4096,
+        "rerank_candidates_num": 2,
+        "qwen_reranker_params": {
+            "qwen_instruction_task": "Given the medical query, find the most relevant document."
+        }
+    },
+
+    "_comment_llm_stages": "Configuration for each text generation stage.",
+    "textbook_summary_llm_settings": {
+        "model": "Qwen/Qwen3-8B",
+        "gpu_id": "1",
+        "enable_thinking": false,
+        "tensor_parallel_size": 1,
+        "max_model_len": 30000,
+        "max_tokens": 512,
+        "temperature": 0.1,
+        "top_p": 0.9,
+        "stop_tokens": ["<|eot_id|>", "<|im_end|>"]
+    },
+    "final_report_llm_settings": {
+        "model": "Qwen/Qwen3-8B",
+        "gpu_id": "2",
+        "enable_thinking": false,
+        "tensor_parallel_size": 1,
+        "max_model_len": 30000,
+        "max_tokens": 4096,
+        "temperature": 0.1,
+        "top_p": 0.9,
+        "stop_tokens": ["<|eot_id|>", "<|im_end|>"]
+    },
+    "mcq_generation_llm_settings": {
+        "model": "Qwen/Qwen3-8B",
+        "gpu_id": "3",
+        "enable_thinking": false,
+        "tensor_parallel_size": 1,
+        "max_model_len": 30000,
+        "max_tokens": 2048,
+        "temperature": 0.1,
+        "top_p": 0.9,
+        "stop_tokens": ["<|eot_id|>", "<|im_end|>"]
+    },
+
+    "_comment_prompts": "System personas and user instruction templates for each generation task.",
+    "system": {
+      "textbook_summary": {
+        "system_persona": "You are a concise and accurate radiology assistant, skilled in summarizing medical texts.",
+        "user_instruction_template": "Please summarize the following textbook pages focusing on the keyword '{keyword}'. The summary should highlight key radiologic findings and diagnostic considerations. Be concise, using 2-3 sentences and your own words. Output only the summary text itself, with no additional conversational text or headers.\n\nTextbook Pages Content:\n{pages_block_text}"
+      },
+      "final_feedback": {
+        "system_persona": "You are an expert radiology AI assistant. Your task is to synthesize the provided information into concise, educational feedback focused *only* on the primary diagnostic keywords provided. Do not explain or elaborate on other terms from the original report unless they are directly relevant to the primary keywords.",
+        "user_instruction_template": "### Primary Diagnostic Keywords\n- {keywords_list_str}\n\n### Original Reviewer Report (for context only)\n{original_reviewer_report}\n\n### Supporting Educational Material\n{user_block_for_final_stages}\n\n### Your Task\nBased on all the information above, provide a concise, synthesized feedback. Structure your response with a section for each **Primary Diagnostic Keyword**. Focus only on clinical teaching points and imaging pearls related to these primary keywords."
+      },
+      "questioner": {
+        "system_persona": "You are a specialized AI assistant for creating multiple-choice questions (MCQs) for radiology education. You must focus *exclusively* on the provided **Primary Diagnostic Keywords**.",
+        "user_instruction_template": "### Primary Diagnostic Keywords to Focus On:\n- {keywords_list_str}\n\n### Full Context (for reference)\n{mcq_input_context}\n\n### Your Task\nBased *only* on the provided context, generate 2 multiple-choice questions **for each Primary Diagnostic Keyword listed above**. Do not generate questions for any other terms or topics mentioned in the context. Each question must test understanding of the information related to the primary keywords.\n\nFollow this format exactly:\n\n### Multiple Choice Questions\n\n#### {{Diagnosis Keyword 1}}\n\nQ1. {{Question stem}}\nA. {{Option A}}\nB. {{Option B}}\nC. {{Option C}}\nD. {{Option D}}\nAnswer: {{Correct Option Letter}}\nExplanation: {{Brief explanation based on the provided context.}}\n\n..."
+      }
+    }
+}
