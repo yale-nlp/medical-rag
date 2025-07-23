@@ -150,23 +150,25 @@ medical-rag/
 Before running the main pipeline, you need two key input files: a **keyword file** and a **local vector index**.
 
 ### 1. Keyword File Generation
-The pipeline requires an input file where each case has a list of pre-defined keywords. The provided `utils/keywords_generator.py` script can generate these keywords from raw reports using either OpenAI's API or a open-source model via vLLM.
+This pipeline requires an input file where each case has a list of keywords. The script `utils/keywords_generator.py` can generate these keywords from raw reports using a local model served via vLLM.
+This script operates in a server-client architecture for high-throughput processing of large datasets.
 
-1.  **Prepare your input file:** Create a source file containing your reports. This can be a JSON file or a CSV file with `case_id` and `reviewer_report` columns.
+1.  **Prepare your input file:** Your source data must be a JSONL file, where each line is a JSON object containing at least a "report" field.
+    * Example input file: `data/keywords_sample/keyword_generator_input_sample.jsonl`
 
-2.  **Set up your environment:**
-    *   For **OpenAI**, ensure your `OPENAI_API_KEY` is set in your environment or a `.env` file.
-    *   For **vLLM**, ensure the `HUGGINGFACE_MODEL` environment variable is set to your desired model (e.g., `meta-llama/Llama-3.1-8B-Instruct`).
+2.  **Customize your prompt (Optional):**
+The system prompt used to guide the model is located in pipeline/prompts.json. You can edit the keyword_generator prompt to better suit your needs.
+    * Example prompt file: `configs/keywords_generator_prompt.json`
 
 3.  **Run the keyword generation script:**
-    Navigate to the `pipeline/` directory and run the script. You will be prompted to choose your model.
-    ```bash
-    # from inside the pipeline/ directory
-    python utils/keywords_generator.py
-    ```
-    *Note: You may need to edit the input and output file paths at the bottom of the `keywords_generator.py` script directly.*
+Navigate to the root directory of the project. The script will start a vLLM server in the background, process all reports, and then automatically shut down the server.
+Execute the script from the root directory using the following command structure, providing paths for the input, output, and prompt files.
 
-4.  **Check the output:** The script will create a new JSON file containing the original reports plus a new `keywords` list for each case. Update the `keyword_file` path in your main pipeline configuration to point to this new file.
+```bash
+python utils/keywords_generator.py --input data/keywords_sample/keyword_generator_input_sample.jsonl --output data/keyword_generator_input_sample/keyword_generator_output_sample.jsonl --prompts configs/keywords_generator_prompt.json
+```
+
+4.  **Check the output:** The script will create a new JSONL file at your specified output path. Each line will contain the original report data plus two new fields: "_raw_response" and "keywords". You can then use this file for the next steps in the pipeline.
 
 ### 2. Local Vector Index Generation
 The local retrieval component relies on a pre-computed vector index of your knowledge base (e.g., textbook pages).
