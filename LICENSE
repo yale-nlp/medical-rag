@@ -1,21 +1,92 @@
-MIT License
-
 Copyright (c) 2025 Yale-NLP
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+-------------------------------------------------------------------------------
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Open Data Commons Attribution License (ODC-By) v1.0
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+You are free to:
+
+Share: To copy, distribute and use the database.
+Create: To produce works from the database.
+Adapt: To modify, transform and build upon the database.
+
+As long as you:
+
+Attribution: You must attribute any public use of the database, or works produced from the database, in the manner specified in the license. For any use or redistribution of the database, or works produced from it, you must make clear to others the license of the database and keep intact any notices on the original database.
+
+Preamble
+
+This Open Data Commons Attribution License (the "License") is a license agreement for data and databases intended to allow users to freely share, modify, and use this data and database subject to the attribution requirements of this license.
+
+Databases can contain a wide variety of materials, from collections of facts to works of original authorship. This License is designed for databases that may contain facts, data, and other material that may be subject to copyright, database rights, or other rights. Some jurisdictions do not permit the modification of databases that are primarily collections of facts. This License does not address those rights and this License is not intended to apply to any database that is not subject to copyright or other rights. If you are unsure whether this License is appropriate for your database, you should seek legal advice.
+
+"Database" means a collection of material (the "Contents") arranged in a systematic or methodical way and individually accessible by electronic or other means.
+
+"Public Use" means any use of the database, or a work produced from the database, that results in the database or work being made available to the public. This includes making the database available to the public by any means, including as a service or application.
+
+"You" means you, an individual or entity exercising rights under this License.
+
+This is a human-readable summary of the Legal Code (the full license is below). It is not a license. It has no legal value and you should carefully review all of the terms and conditions of the actual license before using the licensed material.
+
+This license is based on the Open Data Commons Attribution License Version 1.0.
+
+Full text of the license is available at:
+http://www.opendatacommons.org/licenses/by/1.0/
+
+---
+
+LEGAL CODE
+
+OPEN DATA COMMONS ATTRIBUTION LICENSE (ODC-BY) v1.0
+
+The Licensor (as defined below) grants You (as defined below) a worldwide, royalty-free, non-exclusive, perpetual, irrevocable license to do the following regarding the Database (as defined below), subject to the terms and conditions of this License:
+
+1.0 Definitions
+
+  a. "Contents" means the contents of this Database, which includes the information, independent works, or other material collected into the Database. For example, the Contents would include a collection of names and addresses.
+
+  b. "Database" means a collection of Contents arranged in a systematic or methodical way and individually accessible by electronic or other means offered under the terms of this License.
+
+  c. "Database Right" means any rights resulting from the sui generis database right provided for in EU Directive 96/9/EC, as amended or succeeded, and any other substantially equivalent rights available anywhere in the world.
+
+  d. "Licensor" means the individual or entity that offers the Database under the terms of this License.
+
+  e. "You" means you, an individual or entity exercising rights under this License who has not previously violated the terms of this License with respect to the Database, or who has received express permission from the Licensor to exercise rights under this License despite a previous violation.
+
+  f. "Public Use" means any use of the Database, or a Work (as defined below), that results in the Database or Work being made available to the public. This includes making the Database available to the public by any means, including as a service or application.
+
+  g. "Work" means any work produced from the Database, or from a Public Use of the Database.
+
+2.0 License Grant
+
+  a. Subject to the terms and conditions of this License, the Licensor grants to You a worldwide, royalty-free, non-exclusive, perpetual, irrevocable license to do the following:
+
+    i. To Share the Database, in whole or in part;
+
+    ii. To Create and Adapt the Database, in whole or in part;
+
+    iii. To use the Database, in whole or in part, for any purpose.
+
+3.0 Conditions of Use
+
+  a. Attribution. If you make any Public Use of the Database, or a Work from the Database, you must attribute the use in the manner specified by the Licensor. You must also make clear to others the license of the Database and keep intact any notices on the original Database.
+
+4.0 Limitations of Liability
+
+  a. THE DATABASE IS PROVIDED "AS IS" AND THE LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, WARRANTIES OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+  b. THE LICENSOR WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL, PUNITIVE, OR EXEMPLARY DAMAGES, INCLUDING, BUT NOT LIMITED TO, LOST PROFITS, EVEN IF THE LICENSOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+5.0 Termination
+
+  a. This License and the rights granted hereunder will terminate automatically upon any breach by You of the terms of this License.
+
+6.0 Miscellaneous
+
+  a. This License is the entire agreement between the parties with respect to the Database licensed here. It supersedes all prior understandings, agreements, or representations with respect to the Database.
+
+  b. If any provision of this License is invalid or unenforceable, the remainder of this License will be interpreted so as to best effect the intent of the parties.
+
+  c. This License does not grant any rights in any patents.
+
+  d. The Licensor reserves the right to release the Database under different license terms or to stop distributing the Database at any time; provided, however, that this will not serve to withdraw this License, and this License will continue in full force and effect unless terminated as stated above.
