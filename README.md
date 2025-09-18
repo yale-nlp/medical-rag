@@ -1,8 +1,12 @@
 # MedTutor: A Retrieval-Augmented LLM System for Case-Based Medical Education
 
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![arXiv](https://img.shields.io/badge/arXiv-25XX.XXXXX-b31b1b.svg)](https://placeholder.com/)
+<p align="center">
+  <a href="https://opendatacommons.org/licenses/by/1-0/"><img src="https://img.shields.io/badge/License-ODC--BY-brightgreen.svg" alt="License"></a>
+  <a href="https://2025.emnlp.org/calls/demos/"><img src="https://img.shields.io/badge/EMNLP%202025-System%20Demo-blue" alt="Conference"></a>
+  <a href="https://placeholder.com/"><img src="https://img.shields.io/badge/arXiv-25XX.XXXXX-b31b1b.svg" alt="Paper"></a>
+  <a href="https://huggingface.co/datasets/yale-nlp/MedTutor"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-MedTutor-yellow" alt="Dataset"></a>
+  <a href="https://www.youtube.com/watch?v=7NlCjVf8V4E"><img src="https://img.shields.io/badge/YouTube-Demo%20Video-FF0000?logo=youtube" alt="Demo Video"></a>
+</p>
 
 ## Overview
 
@@ -287,13 +291,15 @@ The pipeline generates a single JSON file in the directory specified by feedback
 ```
 
 ### Citation
-If you use this work in your research, please cite it as follows:
+If you use our work or the MedTutor dataset in your research, please cite our paper as follows:
 
-```code
-@misc{jang2025medtutor,
-  title={MedTutor: A Retrieval-Augmented LLM System for Case-Based Medical Education},
-  author={Dongsuk Jang and Ziyao Shangguan and Kyle Tegtmeyer and Anurag Gupta and Jan Czerminski and Arman Cohan},
-  journal={arXiv preprint arXiv:XXXX.XXXXX},
-  year={2025}
+```bibtex
+@inproceedings{jang2025medtutor,
+  title={{M}ed{T}utor: A Retrieval-Augmented {LLM} System for Case-Based Medical Education},
+  author={Jang, Dongsuk and Shangguan, Ziyao and Tegtmeyer, Kyle and Gupta, Anurag and Czerminski, Jan and Chheang, Sophie  and Cohan, Arman},
+  booktitle={Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing: System Demonstrations},
+  year={2025},
+  publisher={Association for Computational Linguistics},
+  url={https://placeholder_link_to_proceedings},
+  note={To appear}
 }
-```
