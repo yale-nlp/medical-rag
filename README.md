@@ -2,7 +2,7 @@
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: ODC-By-1.0](https://img.shields.io/badge/License-ODC--By--1.0-blue.svg)](https://opendatacommons.org/licenses/by/1-0/)
-[![Paper](https://img.shields.io/badge/Paper-EMNLP_2025_Demo-yellow.svg)](https://aclanthology.org/2025.emnlp-demos.24/)
+[![Paper](https://img.shields.io/badge/Paper-EMNLP_2025_Demos-be1e2d.svg)](https://aclanthology.org/2025.emnlp-demos.24/)
 [![Hugging Face Datasets](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Datasets-yellow)](https://huggingface.co/datasets/yale-nlp/MedTutor)
 
 MedTutor is a scalable, retrieval-augmented generation (RAG) pipeline for case‑based medical education. It combines hybrid retrieval (local knowledge base + live literature search), reranking, and high‑throughput LLM generation to synthesize evidence and produce educational outputs such as feedback and multiple‑choice questions (MCQs). The system is built for speed and reproducibility with vLLM, asyncio, and multi‑GPU support.
@@ -11,6 +11,14 @@ MedTutor is a scalable, retrieval-augmented generation (RAG) pipeline for case�
   <img src="./pipeline/assets/figure1.png" alt="MedTutor pipeline overview" width="720"/>
   <br>
   <em>Figure 1. Overview of the MedTutor pipeline.</em>
+</p>
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=7NlCjVf8V4E" target="_blank">
+    <img src="https://img.youtube.com/vi/7NlCjVf8V4E/hqdefault.jpg" alt="MedTutor Demo Video" width="720"/>
+  </a>
+  <br>
+  <em>Demo Video: Click to watch</em>
 </p>
 
 ## Highlights
@@ -166,12 +174,25 @@ If you reference this research or use the released datasets, please cite:
 
 ```bibtex
 @inproceedings{jang-etal-2025-medtutor,
-  title     = {MedTutor: A Retrieval-Augmented LLM System for Case-Based Medical Education},
-  author    = {Jang, Dongsuk and Shangguan, Ziyao and Tegtmeyer, Kyle and Gupta, Anurag and Czerminski, Jan T and Chheang, Sophie and Cohan, Arman},
-  booktitle = {Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing: System Demonstrations},
-  year      = {2025},
-  url       = {https://aclanthology.org/2025.emnlp-demos.24/}
-}
+    title = "{M}ed{T}utor: A Retrieval-Augmented {LLM} System for Case-Based Medical Education",
+    author = "Jang, Dongsuk  and
+      Shangguan, Ziyao  and
+      Tegtmeyer, Kyle  and
+      Gupta, Anurag  and
+      Czerminski, Jan T  and
+      Chheang, Sophie  and
+      Cohan, Arman",
+    editor = {Habernal, Ivan  and
+      Schulam, Peter  and
+      Tiedemann, J{\"o}rg},
+    booktitle = "Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing: System Demonstrations",
+    month = nov,
+    year = "2025",
+    address = "Suzhou, China",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.emnlp-demos.24/",
+    pages = "319--353",
+    ISBN = "979-8-89176-334-0"
 ```
 
 ## Contact
