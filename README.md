@@ -1,305 +1,170 @@
 # MedTutor: A Retrieval-Augmented LLM System for Case-Based Medical Education
 
-<p align="center">
-  <a href="https://opendatacommons.org/licenses/by/1-0/"><img src="https://img.shields.io/badge/License-ODC--BY-brightgreen.svg" alt="License"></a>
-  <a href="https://2025.emnlp.org/calls/demos/"><img src="https://img.shields.io/badge/EMNLP%202025-System%20Demo-blue" alt="Conference"></a>
-  <a href="https://placeholder.com/"><img src="https://img.shields.io/badge/arXiv-25XX.XXXXX-b31b1b.svg" alt="Paper"></a>
-  <a href="https://huggingface.co/datasets/yale-nlp/MedTutor"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-MedTutor-yellow" alt="Dataset"></a>
-  <a href="https://www.youtube.com/watch?v=7NlCjVf8V4E"><img src="https://img.shields.io/badge/YouTube-Demo%20Video-FF0000?logo=youtube" alt="Demo Video"></a>
-</p>
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: ODC-By-1.0](https://img.shields.io/badge/License-ODC--By--1.0-blue.svg)](https://opendatacommons.org/licenses/by/1-0/)
+[![Paper](https://img.shields.io/badge/Paper-EMNLP_2025_Demo-yellow.svg)](https://aclanthology.org/2025.emnlp-demos.24/)
 
-## Overview
+MedTutor is a scalable, retrieval-augmented generation (RAG) pipeline for case‑based medical education. It combines hybrid retrieval (local knowledge base + live literature search), reranking, and high‑throughput LLM generation to synthesize evidence and produce educational outputs such as feedback and multiple‑choice questions (MCQs). The system is built for speed and reproducibility with vLLM, asyncio, and multi‑GPU support.
 
 <p align="center">
-  <img src="./pipeline/assets/figure1.png" alt="Figure 1. " width="600"/>
+  <img src="./pipeline/assets/figure1.png" alt="MedTutor pipeline overview" width="720"/>
   <br>
   <em>Figure 1. Overview of the MedTutor pipeline.</em>
 </p>
 
-**MedTutor** is a high-performance, asynchronous pipeline designed for advanced Retrieval-Augmented Generation (RAG) in the medical domain. This project leverages the power of local, self-hosted LLMs and the `vLLM` inference engine to deliver state-of-the-art throughput for complex analysis of medical reports, such as radiology reviews.
+## Highlights
 
-The primary goal of this repository is to provide a robust and scalable framework for researchers and clinicians to synthesize evidence from multiple sources—including internal knowledge bases and external academic literature—to generate educational feedback and assessments. The pipeline is architected for efficiency, utilizing multi-GPU parallel processing and continuous batching to handle large-scale datasets.
+- High‑throughput inference with vLLM (continuous batching, multi‑GPU, tensor parallel).
+- Hybrid retrieval: dense local index + live PubMed/Semantic Scholar APIs (optional).
+- Reranking via cross‑encoder or local Qwen‑Reranker served through vLLM.
+- Modular multi‑stage generation: textbook summaries → final feedback → MCQs.
+- Configuration‑driven experiments via JSON; swap models/prompts without code changes.
+- Gradio UI for exploring a single case and running the pipeline interactively.
 
-<p align="center">
-<a href="https://www.youtube.com/watch?v=7NlCjVf8V4E" target="_blank">
-<img src="https://img.youtube.com/vi/7NlCjVf8V4E/hqdefault.jpg" alt="MedTutor Demo Video" width="600"/>
-</a>
-<br>
-<em>Figure 2. Click to watch the MedTutor Demo Video.</em>
-</p>
+## Repository Structure
 
-## Key Features
+- `pipeline/async_main.py`: Batch pipeline entrypoint (staged retrieval → generation → write results).
+- `pipeline/app.py`: Gradio UI (single‑case run, live logs, optional demo mode).
+- `pipeline/utils/`: Retrieval (local + live), reranker, vLLM handler, embeddings, keyword generator.
+- `pipeline/configs/`: Example configs (`configs_all.json`, `gradio_config.json`, `configs_template.json`).
+- `pipeline/llm_annotation/`: LLM‑as‑a‑Judge tools and configs.
+- `pipeline/manual_annotation/`: Streamlit UI for human annotations.
+- `pipeline/assets/`: Figures and screenshots.
 
-- **High-Throughput Inference**
-  - Built on `vLLM` for fast, continuous batching and optimized GPU utilization.
-- **Hybrid Retrieval**
-  - Combines dense vector-based retrieval from a local knowledge base (e.g., textbook pages) with live API searches on academic databases like PubMed and Semantic Scholar.
-- **Advanced Reranking**
-  - Employs state-of-the-art reranker models (e.g., `Qwen/Qwen3-Reranker-8B`) to intelligently score and prioritize retrieved documents based on clinical context.
-- **Multi-Stage Batch Generation**
-  - A modular, multi-stage pipeline that first synthesizes evidence into summaries and then generates comprehensive final reports and Multiple-Choice Questions (MCQs) in large, efficient batches.
-- **Asynchronous Architecture**
-  - Utilizes `asyncio` and `multiprocessing` to handle I/O-bound tasks (like API calls) and compute-bound tasks (like LLM inference) concurrently, maximizing efficiency.
-- **Interactive UI**
-  - Includes a Gradio-based interface (`app.py`) for interactively running and exploring the pipeline's output for a single case.
+## Requirements
 
-## 📂 Publicly Available Dataset
+- Python 3.11+
+- Linux/macOS, CUDA GPU recommended (70B models require multiple GPUs or tensor parallelism)
+- vLLM installed separately (not pinned in `requirements.txt` due to CUDA/driver variability)
 
-To facilitate further research, we are publicly releasing a large-scale dataset(total size of 144K) generated by the MedTutor pipeline. This dataset includes outputs from multiple generator models and evaluations from LLM-as-a-Judge.
+## Installation
 
-| Hugging Face Dataset |
-| :--- |
-| [![Hugging Face Datasets](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-yale--nlp/MedTutor-yellow)](https://huggingface.co/datasets/yale-nlp/MedTutor) |
-
-
-
-## Pipeline Architecture
-
-The pipeline executes in a series of distinct, sequential stages. Each stage is completed for all cases in the dataset before moving to the next, leveraging batch processing for maximum efficiency at the generation steps.
-
-1.  **Data Loading & Pre-computation:**
-    *   Loads the input dataset of cases (e.g., radiology reports with associated keywords).
-    *   Loads a pre-computed local vector index (e.g., embedded textbook pages).
-    *   Computes embeddings for all unique keywords from the input cases.
-
-2.  **Stage 1: Hybrid Retrieval & Reranking:**
-    *   For each keyword in a case, the pipeline performs retrieval from multiple sources:
-        *   **Local Retrieval:** A fast vector search against the local knowledge base.
-        *   **Live Retrieval:** Asynchronous API calls to PubMed and Semantic Scholar.
-    *   The retrieved documents are then reranked using a powerful model to select the most relevant evidence for the given clinical context.
-
-3.  **Stage 2: Textbook Summary Generation:**
-    *   The system collects all locally retrieved textbook pages for all cases.
-    *   It sends a single, large **batch request** to the LLM service to generate a concise summary for each set of pages, focusing on its associated keyword.
-
-4.  **Stage 3: Final Report & MCQ Generation:**
-    *   The system synthesizes all evidence for each case: reranked papers and generated textbook summaries.
-    *   It sends two final **batch requests** to the LLM service:
-        *   One to generate a comprehensive, educational feedback report for each case.
-        *   One to generate a set of Multiple-Choice Questions (MCQs) for assessment based on the synthesized evidence.
-
-
-## Project Structure
-```
-medical-rag/
-├── pipeline/
-│ ├── configs/ # Experiment configuration files
-│ ├── data/
-│ │ └── input_files/ # Input data (e.g., keyword files)
-│ │ 
-│ ├── result/ # Output directory for pipeline runs
-│ ├── utils/
-│ │ ├── embed.py # Script to create vector index
-│ │ ├── keywords_generator.py # Script to create keywords
-│ │ ├── retrieval.py # Core retrieval & reranking logic
-│ │ └── vllm_handler.py # vLLM inference logic
-│ ├── llm_annotation/ # LLM-as-a-Judge evaluation tools
-│ │ ├── run_annotation.py
-│ │ └── README.md
-│ ├── manual_annotation/ # Manual annotation UI
-│ │ ├── annotation_tool.py
-│ │ └── README.md
-│ ├── async_main.py # Main pipeline execution script
-│ ├── app.py # Gradio interactive demo UI
-│ ├── llm_services.py # Client for vLLM workers
-│ ├── requirements.txt
-│ └── run_exp.sh # Example script for running experiments
-└── README.md           
-```
-
-## Setup and Installation
-
-### Prerequisites
-
--   Python 3.11+
--   NVIDIA GPU with CUDA 11.8 or higher
-
-### Installation Steps
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/yale-nlp/medical-rag.git
-    cd medical-rag
-    ```
-
-2.  **Create a virtual environment (recommended):**
-    ```bash
-    conda create -n medtutor python=3.11 -y
-    conda activate medtutor
-    ```
-
-3.  **Install `vLLM`:**
-    This project relies on `vllm`, which has specific installation requirements. Please follow the [official vLLM installation guide](https://docs.vllm.ai/en/stable/getting_started/installation/index.html).
-
-4.  **Install remaining packages:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-5.  **Set up environment variables:**
-    Create a `.env` file. This file is used to store API keys for live retrieval. Then edit `.env` and add your API keys:
-    ```
-    SEMANTIC_SCHOLAR_API_KEY="YOUR_S2_API_KEY"
-    PUBMED_API_KEY="YOUR_PUBMED_API_KEY"
-    GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
-    OPENAI_API_KEY="YOUR_OPENAI_API_KEY"
-    ```
-
-## Data Pre-computation
-
-Before running the main pipeline, you need two key input files: a **keyword file** and a **local vector index**.
-
-### 1. Keyword File Generation
-This pipeline requires an input file where each case has a list of keywords. The script `utils/keywords_generator.py` can generate these keywords from raw reports using a local model served via vLLM.
-This script operates in a server-client architecture for high-throughput processing of large datasets.
-
-1.  **Prepare your input file:** Your source data must be a JSONL file, where each line is a JSON object containing at least a "report" field.
-    * Example input file: `data/keywords_sample/keyword_generator_input_sample.jsonl`
-
-2.  **Customize your prompt (Optional):**
-The system prompt used to guide the model is located in pipeline/prompts.json. You can edit the keyword_generator prompt to better suit your needs.
-    * Example prompt file: `configs/keywords_generator_prompt.json`
-
-3.  **Run the keyword generation script:**
-Navigate to the root directory of the project. The script will start a vLLM server in the background, process all reports, and then automatically shut down the server.
-Execute the script from the root directory using the following command structure, providing paths for the input, output, and prompt files.
+1) Create environment and install dependencies
 
 ```bash
-python utils/keywords_generator.py --input data/keywords_sample/keyword_generator_input_sample.jsonl --output data/keyword_generator_input_sample/keyword_generator_output_sample.jsonl --prompts configs/keywords_generator_prompt.json
+python -m venv .venv && source .venv/bin/activate  # or conda
+pip install -r requirements.txt
 ```
 
-4.  **Check the output:** The script will create a new JSONL file at your specified output path. Each line will contain the original report data plus two new fields: "_raw_response" and "keywords". You can then use this file for the next steps in the pipeline.
+2) Install vLLM (follow official instructions for your platform/CUDA)
 
-### 2. Local Vector Index Generation
-The local retrieval component relies on a pre-computed vector index of your knowledge base (e.g., textbook pages).
+- vLLM docs: https://docs.vllm.ai/en/stable/getting_started/installation/
 
-1.  **Place your source text files** into a directory like `pipeline/data/`.
-2.  **Run the embedding script** from the `pipeline/` directory(**Must** update the `embed.py` manually to align with your source text files). This script will load the text, embed it using the specified HuggingFace model, and save the index.
-    ```bash
-    # from inside the pipeline/ directory
-    python utils/embed.py
-    ```
-3.  This will create a file like `data/embedded_pages_hf_...json`. Update the `local_index_path` in your configuration file to point to this new file.
+3) (Optional) Set API keys for live retrieval (place a `.env` file in `pipeline/` or export as env vars)
 
-4. An example file with pre-generated embeddings is available [here](https://huggingface.co/datasets/jj97/medtutor_embed_page_example).
-
-
-## Configuration
-
-The pipeline is controlled by a central JSON configuration file (e.g., `configs/configs_all.json`).
-
--   `hf_embedding_model` / `embedding_model_device`: Specifies the model for embedding queries.
--   `retrievers`: An array to enable/disable retrieval sources (`"local"`, `"pubmed"`, `"semantic"`).
--   `keyword_file`, `local_index_path`: Paths to your pre-computed data.
--   `feedback_dir`: Directory where the final output JSON will be saved.
--   **`services`**: Defines the models to be loaded onto GPUs. You can define multiple services (e.g., one for reranking, one for generation) and assign them to specific GPUs (`gpu_id`) and set `tensor_parallel_size`.
--   **`service_map`**: Maps pipeline stages (`reranker`, `textbook_summary`, etc.) to the services defined above. This allows you to use different models for different tasks.
--   `system`: Contains the system personas and user instruction templates for all generation tasks, enabling easy prompt engineering.
-
-
-## Usage
-
-The pipeline is executed from the command line via `async_main.py`.
-
-### Basic Execution
-
-To run the pipeline with the default configuration file (`configs_all.json`):
-```bash
-python async_main.py
+```
+SEMANTIC_SCHOLAR_API_KEY=...
+PUBMED_API_KEY=...
 ```
 
-### Specifying a Configuration File
-For running different experiments, you can use the --config argument to point to a different file. This is the recommended way to manage multiple experimental setups.
+If you do not set keys, set `retrievers` to only `"local"` in the config.
+
+## Quickstart
+
+1) Prepare a config
 
 ```bash
+cd pipeline
+cp configs/configs_template.json configs/configs.json
+# Edit configs/configs.json → update absolute paths: "keyword_file", "local_index_path", "feedback_dir".
+# Optionally set models/GPUs under "services" and the stage "service_map".
+```
+
+2) (Optional) Build a local embedding index for textbook pages
+
+Place your source pages under `pipeline/data/ocr_batches/` (or adjust the script), then run:
+
+```bash
+python utils/embed.py
+```
+
+This writes an embedded page file (e.g., `pipeline/data/embedded_pages_*.json`). Point `local_index_path` at this file.
+
+3) Run the pipeline
+
+```bash
+# from pipeline/
 python async_main.py --config configs/configs.json
 ```
 
-> ⚠️ **Important:** Before running, you must edit the `configs.json` file. Make sure to replace the placeholder paths with the actual paths to your local files, such as your embedding index, keyword files, and output directories. The script will fail if these paths are not correctly configured.
+Useful flags:
+- `--debug` for verbose logs
+- `--case_id <ID>` to process a single case from the keyword file
 
-### Enabling Debug Mode
-To see detailed logs, including individual prompt contents and intermediate steps, use the --debug flag.
-
-```bash
-python async_main.py --config configs/my_experiment.json --debug
-```
-
-### Running the Interactive System UI
-To explore the pipeline's functionality on a single case, run the Gradio application:
-
-<p align="center">
-  <img src="./pipeline/assets/medtutor_ui.png" alt="Figure 1. " width="600"/>
-  <br>
-  <em>Figure 3. Overview of the MedTutor System UI.</em>
-</p>
+4) Explore the UI
 
 ```bash
+# from pipeline/
 python app.py
 ```
 
-For a quick start without running the live pipeline, you can use the demo mode, which uses pre-generated results:
+Demo mode is available via `--demo_mode`, but requires a local demo results file; see `app.py` for path details.
+
+## Data Preparation
+
+You need two inputs: (1) a keyword file per case, and (2) a local embedding index of textbook pages.
+
+1) Keyword generation (optional)
+
+The high‑throughput keyword generator uses a local vLLM server.
 
 ```bash
-python app.py --demo_mode
+# from pipeline/
+python utils/keywords_generator.py \
+  --input data/keywords_sample/keyword_generator_input_sample.jsonl \
+  --output data/keywords_sample/keyword_generator_output_sample.jsonl \
+  --prompts configs/keywords_generator_prompt.json
 ```
 
-### Evaluation Tools
-This repository includes powerful tools for evaluating the pipeline's output.
+Each output line will include `_raw_response` and a `keywords` list. Use this file as `keyword_file` in your config.
 
-LLM-as-a-Judge Annotation: An automated system for evaluating generated content using another LLM (e.g. MedGemma, Gemini and etc.) as a "judge." This is ideal for large-scale, reproducible evaluation.
+2) Local vector index
 
-See instructions: [LLM Annotation Instructions](/pipeline/llm_annotation/README.md)
+Run `python utils/embed.py` (see Quickstart) to build an index from your pages and set `local_index_path` accordingly. If you only want to test the pipeline structure, you can temporarily set `retrievers` to `["local"]` and use a small index.
 
-Manual Annotation Tool: A Streamlit-based user interface designed for human experts to perform detailed, side-by-side comparative annotation of outputs from different models.
+## Configuration Notes
 
-See instructions: [Manual Annotation Instructions](/pipeline/manual_annotation/README.md)
+- `hf_embedding_model` / `embedding_model_device`: Model/device for query embeddings (CPU works for small jobs).
+- `retrievers`: Enable sources among `"local"`, `"pubmed"`, `"semantic"`.
+- `keyword_file`, `local_index_path`: Absolute or project‑relative paths to your data.
+- `services`: Define model workers (e.g., reranker and generator) with `gpu_id`, `tensor_parallel_size`, and per‑stage generation params.
+- `service_map`: Map stages (`reranker`, `textbook_summary`, `final_report`, `mcq_generation`) to a service name.
+- `system`: System personas and user templates per stage.
 
-### Output Format
-The pipeline generates a single JSON file in the directory specified by feedback_dir. The output file contains a timestamp, the configuration used for the run, and a list of processed reports. Each report object is structured as follows:
+See `pipeline/configs/configs_all.json` for a larger 70B example and `pipeline/configs/gradio_config.json` for the UI defaults.
 
-```json
-{
-  "case_id": "...",
-  "original_keywords": ["keyword1", "keyword2"],
-  "original_reviewer_report": "The original text of the report...",
-  "evidence_reranked_papers": {
-    "keyword1": [
-      { 
-      "title": "...", 
-      "abstract": "...", 
-      "rerank_score": 0.3184, 
-      ... 
-      },
-      ...
-    ]
-  },
-  "evidence_retrieved_textbook_pages": {
-    "keyword1": [
-      { 
-      "index": 101, 
-      "text": "Text from the textbook page..." 
-      },
-      ...
-    ]
-  },
-  "generated_textbook_summaries": {
-    "keyword1": "A concise summary generated by the LLM..."
-  },
-  "generated_final_feedback": "The final, synthesized educational feedback report...",
-  "generated_mcqs": "Q1. ...\nA. ...\nAnswer: A\n..."
-}
-```
+## Output Format
 
-### Citation
-If you use our work or the MedTutor dataset in your research, please cite our paper as follows:
+The pipeline writes a timestamped JSON under `feedback_dir`, including the resolved config and a list of processed cases. Each case includes original inputs, retrieved/reranked evidence, intermediate textbook summaries, final feedback text, and MCQs.
+
+## Evaluation & Annotation
+
+- LLM‑as‑a‑Judge (automated, multi‑provider): see pipeline docs at [pipeline/llm_annotation/README.md](pipeline/llm_annotation/README.md)
+- Human annotation UI (Streamlit): see [pipeline/manual_annotation/README.md](pipeline/manual_annotation/README.md)
+
+## Reproducibility
+
+- Determinism across large LLMs can vary by hardware/driver. We recommend pinning configs and logging seeds and model versions in your runs. The pipeline logs runtime config and parameters alongside outputs.
+
+## License
+
+- Repository license: Open Data Commons Attribution (ODC-By) v1.0. See `LICENSE` and the official terms at https://opendatacommons.org/licenses/by/1-0/
+- Third-party datasets and materials (e.g., MIMIC, CheXpert, PubMed/S2 content) remain under their original licenses and terms. You are responsible for complying with those licenses and any applicable data use agreements.
+
+## Citation
+
+If you reference this research or use the released datasets, please cite:
 
 ```bibtex
-@inproceedings{jang2025medtutor,
-  title={{M}ed{T}utor: A Retrieval-Augmented {LLM} System for Case-Based Medical Education},
-  author={Jang, Dongsuk and Shangguan, Ziyao and Tegtmeyer, Kyle and Gupta, Anurag and Czerminski, Jan and Chheang, Sophie  and Cohan, Arman},
-  booktitle={Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing: System Demonstrations},
-  year={2025},
-  publisher={Association for Computational Linguistics},
-  url={https://placeholder_link_to_proceedings},
-  note={To appear}
+@inproceedings{jang-etal-2025-medtutor,
+  title     = {MedTutor: A Retrieval-Augmented LLM System for Case-Based Medical Education},
+  author    = {Jang, Dongsuk and Shangguan, Ziyao and Tegtmeyer, Kyle and Gupta, Anurag and Czerminski, Jan T and Chheang, Sophie and Cohan, Arman},
+  booktitle = {Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing: System Demonstrations},
+  year      = {2025},
+  url       = {https://aclanthology.org/2025.emnlp-demos.24/}
 }
+```
+
+## Contact
+
+For questions or issues, please open a GitHub issue or email to `jamesjang26@snu.ac.kr`
