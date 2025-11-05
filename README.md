@@ -3,6 +3,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: ODC-By-1.0](https://img.shields.io/badge/License-ODC--By--1.0-blue.svg)](https://opendatacommons.org/licenses/by/1-0/)
 [![Paper](https://img.shields.io/badge/Paper-EMNLP_2025_Demo-yellow.svg)](https://aclanthology.org/2025.emnlp-demos.24/)
+[![Hugging Face Datasets](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Datasets-yellow)](https://huggingface.co/datasets/yale-nlp/MedTutor)
 
 MedTutor is a scalable, retrieval-augmented generation (RAG) pipeline for case‑based medical education. It combines hybrid retrieval (local knowledge base + live literature search), reranking, and high‑throughput LLM generation to synthesize evidence and produce educational outputs such as feedback and multiple‑choice questions (MCQs). The system is built for speed and reproducibility with vLLM, asyncio, and multi‑GPU support.
 
@@ -121,6 +122,14 @@ Each output line will include `_raw_response` and a `keywords` list. Use this fi
 2) Local vector index
 
 Run `python utils/embed.py` (see Quickstart) to build an index from your pages and set `local_index_path` accordingly. If you only want to test the pipeline structure, you can temporarily set `retrievers` to `["local"]` and use a small index.
+
+### Released Datasets (Hugging Face)
+
+- Dataset: https://huggingface.co/datasets/yale-nlp/MedTutor
+- Composition (per case):
+  - Inputs: `case_id`, `reviewer_report`, `keywords`
+  - Retrieval: `reranked_papers_per_keyword` (title, abstract, url, source, rerank_score), `local_pages_per_keyword` (index, text)
+  - Generated: `generated_textbook_summaries` (per keyword), `generated_final_feedback`, `generated_mcqs`
 
 ## Configuration Notes
 
